@@ -17,31 +17,35 @@
 ```bash
 # Make a javascript file
 echo "export default { fetch() { return new Response('hello world') } }" > index.js
-# try it out
+# Try it out
 npx wrangler dev index.js
-# and then deploy it
+# And then deploy it
 npx wrangler deploy index.js --name my-worker
 # visit https://my-worker.<your workers subdomain>.workers.dev
 ```
+
+## Beta release
+TODO
+
 
 ## Create a Project
 
 ```bash
 # Generate a new project
 npx wrangler init my-worker --no-delegate-c3
-# try it out
+# Try it out
 cd my-worker && npm run start
-# and then deploy it
+# And then deploy it
 npm run deploy
 ```
 
-## Installation:
+## Installation
 
 ```bash
 $ npm install wrangler --save-dev
 ```
 
-## Configuration:
+## Configuration
 
 Wrangler is configured via a `wrangler.toml` file in the project root. When utilizing the `wrangler init` command, a `wrangler.toml` file will be created for you.
 
