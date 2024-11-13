@@ -3,7 +3,6 @@ import os from "os";
 import path from "path";
 import { afterEach, beforeEach, describe, it, vi } from "vitest";
 import { FilesystemWorkerRegistry } from "../dev-registry/FilesystemWorkerRegistry";
-import { logger as defaultLogger } from "../logger";
 import type { WorkerDefinition } from "../dev-registry";
 import type { Logger } from "../logger";
 
@@ -15,22 +14,16 @@ vi.mock("node:fs", async (importOriginal) => {
 	};
 });
 
-vi.mock("../logger", () => {
-	return {
-		logger: {
-			debug: vi.fn(),
-			error: vi.fn(),
-		},
-	};
-});
-
 describe("FilesystemWorkerRegistry", () => {
 	let tempDir: string;
 	let registry: FilesystemWorkerRegistry;
 	let logger: Logger;
 
 	beforeEach(() => {
-		logger = defaultLogger;
+		logger = {
+			debug: vi.fn(),
+			error: vi.fn(),
+		} as unknown as Logger;
 		tempDir = fs.mkdtempSync(path.join(os.tmpdir(), "dev-registry-test-"));
 		registry = new FilesystemWorkerRegistry(tempDir, logger);
 		vi.useFakeTimers();
