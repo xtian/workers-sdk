@@ -3,8 +3,9 @@ import os from "os";
 import path from "path";
 import { afterEach, beforeEach, describe, it, vi } from "vitest";
 import { FilesystemWorkerRegistry } from "../dev-registry/FilesystemWorkerRegistry";
-import { mockConsoleMethods } from "./helpers/mock-console";
+import { logger as defaultLogger } from "../logger";
 import type { WorkerDefinition } from "../dev-registry";
+import type { Logger } from "../logger";
 
 vi.mock("node:fs", async (importOriginal) => {
 	const actual = (await importOriginal()) as object;
@@ -14,14 +15,24 @@ vi.mock("node:fs", async (importOriginal) => {
 	};
 });
 
+vi.mock("../logger", () => {
+	return {
+		logger: {
+			debug: vi.fn(),
+			error: vi.fn(),
+		},
+	};
+});
+
 describe("FilesystemWorkerRegistry", () => {
 	let tempDir: string;
 	let registry: FilesystemWorkerRegistry;
-	const std = mockConsoleMethods();
+	let logger: Logger;
 
 	beforeEach(() => {
+		logger = defaultLogger;
 		tempDir = fs.mkdtempSync(path.join(os.tmpdir(), "dev-registry-test-"));
-		registry = new FilesystemWorkerRegistry(tempDir);
+		registry = new FilesystemWorkerRegistry(tempDir, logger);
 		vi.useFakeTimers();
 	});
 
@@ -266,7 +277,7 @@ describe("FilesystemWorkerRegistry", () => {
 		expect(parsedContent.wranglerVersion).toBeDefined();
 
 		// Verify that no error was logged during the update process
-		expect(std.err).toBe("");
+		expect(logger.error).not.toHaveBeenCalled();
 	});
 
 	it("should handle concurrent worker registrations", async () => {
@@ -311,7 +322,7 @@ describe("FilesystemWorkerRegistry", () => {
 		}
 
 		// Verify that no errors were logged during the process
-		expect(std.err).toBe("");
+		expect(logger.error).not.toHaveBeenCalled();
 	});
 
 	it("should handle concurrent worker unregistrations", async () => {
@@ -354,8 +365,8 @@ describe("FilesystemWorkerRegistry", () => {
 			expect(fs.existsSync(workerFilePath)).toBe(false);
 		}
 
-		expect(std.err).toBe("");
-		expect(std.debug).toBe("");
+		expect(logger.error).not.toHaveBeenCalled();
+		expect(logger.debug).not.toHaveBeenCalled();
 	});
 
 	it("should only create one watcher for multiple devRegistry instances", async () => {
@@ -523,7 +534,7 @@ describe("FilesystemWorkerRegistry", () => {
 		expect(boundWorkers?.worker3).toBeDefined();
 
 		// Verify that no errors were logged during the process
-		expect(std.err).toBe("");
+		expect(logger.error).not.toHaveBeenCalled();
 	});
 
 	it("should handle missing or undefined services and durable objects in getBoundRegisteredWorkers", async () => {
@@ -608,7 +619,7 @@ describe("FilesystemWorkerRegistry", () => {
 		expect(Object.keys(boundWorkers || {})).toHaveLength(0);
 
 		// Verify that no errors were logged during the process
-		expect(std.err).toBe("");
+		expect(logger.error).not.toHaveBeenCalled();
 	});
 
 	it("should correctly start and stop the worker registry", async () => {
