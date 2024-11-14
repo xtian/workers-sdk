@@ -40,7 +40,7 @@ describe("findPackageNames()", () => {
 			  "workers.new",
 			  "@cloudflare/workflows-shared",
 			  "wrangler",
-			  "@cloudflare/wrangler-devtools",
+			  "@cloudflare/chrome-devtools-patches",
 			}
 		`);
 	});

@@ -108,7 +108,7 @@ describe("findDeployablePackageNames()", () => {
 			  "@cloudflare/workers-shared",
 			  "workers.new",
 			  "@cloudflare/workflows-shared",
-			  "@cloudflare/wrangler-devtools",
+			  "@cloudflare/chrome-devtools-patches",
 			}
 		`);
 	});
