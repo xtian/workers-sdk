@@ -1121,11 +1121,11 @@ function normalizeAndValidateEnvironment(
 		undefined
 	);
 
-	const workers_dev_previews = inheritable(
+	const preview_urls = inheritable(
 		diagnostics,
 		topLevelEnv,
 		rawEnv,
-		"workers_dev_previews",
+		"preview_urls",
 		isBoolean,
 		true
 	);
@@ -1264,7 +1264,7 @@ function normalizeAndValidateEnvironment(
 		placement: normalizeAndValidatePlacement(diagnostics, topLevelEnv, rawEnv),
 		build,
 		workers_dev,
-		workers_dev_previews,
+		preview_urls,
 		// Not inherited fields
 		vars: notInheritable(
 			diagnostics,
